@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %} Register {% endblock %}
+
+{% block content %} 
+
+{% if form.errors %}
+    <p>Something went wrong</p>
+{% endif %}
+<h2> Register </h2>
+<form method="POST" action = "{% url 'register' %}">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <input type="text" name="org_id" id="org_id">
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+    
+{% endblock %}
