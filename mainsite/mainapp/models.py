@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -33,6 +34,8 @@ class PurchaseOrder(models.Model):
     dest_org_id = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, to_field='org_id', related_name='dest_org_id')
     approval_status = models.CharField(max_length=1, choices=[('P', 'Pending'), ('A', 'Approved'), ('R', 'Rejected')], default='P')
     comments = models.CharField(max_length=255, default='')
+    created_on = models.DateTimeField(default=datetime.now())
+    updated_on = models.DateTimeField(default=datetime.now())
 
 class PurchaseOrderDetails(models.Model):
     order_id = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, to_field='order_id')
