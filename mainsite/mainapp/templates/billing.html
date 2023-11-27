@@ -2,5 +2,35 @@
 {% load static %}
 {% block title %} Home {% endblock %}
 {% block content %}
+    {% for order in orders %}
+    <div class="card p-2 m-3">
+        <h4>Order: <a data-bs-toggle="collapse" href="#ord_{{ order.order_id }}" aria-expanded="false" aria-controls="ord_{{ order.order_id }}">{{ order.order_id }}</a></h4>
+        <p class="card-text">
+            <b>From:       </b>{{ order.src_org }} <br>
+            <b>To:         </b>{{ order.dest_org }} <br>
+            <b>Total Cost: </b>{{ order.total_price }} <br>
+            <b>Order Date: </b>{{ order.created_on }}  
+        </p>
+
+        <div class="collapse" id="ord_{{ order.order_id }}">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Asset Name</th>
+                        <th>Price Per Unit</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+            {% for item in order.items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>{{ item.qty }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+    </div>
+    {% endfor %}
     
 {% endblock %}

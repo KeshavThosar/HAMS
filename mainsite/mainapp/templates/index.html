@@ -1,23 +1,93 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %} Home {% endblock %}
+{% block additional_scripts %}
+    <script defer src="{% static 'js/homepage.js' %}"></script>
+{% endblock %}
+
+
 {% block content %}
 
-    <div class="container">
+<div class="container">
+    <table class="table table-bordered">
+        <tr>
+            <td>Name</td>
+            <td>{{user.first_name}} {{user.last_name}}</td>
+        </tr>
+        <tr>
+            <td>Organization</td>
+            <td>{{org.org_id.name}}</td>
+        </tr>
+        <tr>
+            <td>Address</td>
+            <td>{{org.org_id.address}}</td>
+        </tr>
+    </table>
+
+    <h2>Inventory</h2>
+    <div class="p-2">
+        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">Add/Modify Asset</a>
+    </div>
+    <hr>
+
     <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
-    {% for asset in assets %}
-        <div class="col card m-3" style="width: 18rem;">
-            <img src="{% static 'hams logo.jpeg' %}" class="card-img-top" style="height: 130px; object-fit: cover;" alt="...">
+        {% for asset in assets %}
+        {% if asset.qty_available > 0 %}
+        <div class="col card m-3" id="asset_{{ asset.asset_id.pk }}" data-qty-available="{{ asset.qty_available }}" data-price-per-unit="{{ asset.price_per_unit }}" style="width: 18rem;">
+            <img src="{{ asset.asset_id.img_url }}" class="card-img-top" style="height: 130px; object-fit: cover;">
             <div class="card-body">
                 <h5 class="card-title">{{ asset.asset_id.name }}</h5>
                 <p class="card-text">
-                    Asset ID: {{ asset.asset_id.name }}<br>
+                    Asset ID: {{ asset.asset_id.pk }}<br>
                     Quantity: {{ asset.qty_available }}
+                    {% if org.org_id.org_type == 'S' %}
+                    <br>Unit Price: {{ asset.price_per_unit }}
+                    {% endif %}
+
                 </p>
             </div>
         </div>
-    {% endfor %}
+        {% endif %}
+        {% endfor %}
     </div>
-    </div>
+</div>
 
+{% endblock %}
+
+
+
+{% block modal %}
+<div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">Add/Modify Asset</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addAssetForm" action="{% url 'addAsset' %}" method="post">
+                    {% csrf_token %}
+                    <label for="inputAssetId" class="form-label" >Enter Asset ID</label>
+                    <input type="text" id="inputAssetId" class="form-control" required/>
+                    <button id="validateAssetId" class="btn btn-primary mt-2 mb-3">Validate</button>
+                    <br>
+                    
+                    <label for="inputQty" class="form-label">Enter Quantity</label>
+                    <input type="number" id="inputQty" name='qty' class="form-control mb-2" required/>
+                    
+                    {% if org.org_id.org_type == 'S' %}
+                    <label for="inputPrice" class="form-label">Enter Per Unit Price</label>
+                    <input type="number" id="inputPrice" name='price' class="form-control mb-2" required/>
+                    {% endif %}
+                    
+                    <input type="hidden" name="assetId" id="assetId">
+                    <input type="submit" id="submit" value="submit" style="display: none;">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="submitAddAssetFormBtn" type="button" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

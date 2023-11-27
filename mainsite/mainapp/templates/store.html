@@ -1,6 +1,58 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %} Home {% endblock %}
-{% block content %}
+{% block additional_scripts %}
+    <script defer src="{% static 'js/store.js' %}"></script>
+{% endblock %}
 
+{% block content %}
+<h2>Store</h2>
+{% if org.org_id.org_type == 'H' %}
+<a href="#" id="view-cart-btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewCartModal">View Cart</a>
+{% endif %}
+<div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mt-3">
+    {% for product in products %}
+        <div class="col card m-3" style="width: 18rem;">
+            <img src="{{ product.asset_id.img_url }}" class="card-img-top" style="height: 130px; object-fit: cover;">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.asset_id.name }}</h5>
+                <p class="card-text">
+                    <b>Supplier:</b> {{ product.org_id.name }}<br>
+                    <b>Asset ID:</b> {{ product.asset_id.pk }}<br>
+                    <b>Stock:</b> {{ product.qty_available }}<br>
+                    <b>Price:</b> {{ product.price_per_unit }}<br>
+                </p>
+                {% if org.org_id.org_type == 'H' %}
+                <a class="btn btn-primary func-addToCart" href="#" id="asset_{{product.asset_id.pk}}_{{product.org_id.pk}}" role="button" data-in-cart="false" data-asset-name="{{ product.asset_id.name }}" data-org-name="{{ product.org_id.name }}" data-price="{{ product.price_per_unit }}">Add to cart</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+
+{% block modal %}
+<div class="modal modal-lg fade" id="viewCartModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">View Cart</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="cartShow"></p>
+
+                <form id="checkoutForm" action="{% url 'store' %}" method="post">
+                    {% csrf_token %}
+                    
+                    <input type="hidden" name="cartText" id="cartText">
+                    <input type="submit" id="submit" value="submit" style="display: none;">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="submitCheckoutBtn" type="button" class="btn btn-primary">Place Order</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

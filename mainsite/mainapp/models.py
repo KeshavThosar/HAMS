@@ -32,10 +32,10 @@ class PurchaseOrder(models.Model):
     order_id = models.AutoField(primary_key=True)
     src_org_id = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, to_field='org_id', related_name='src_org_id')
     dest_org_id = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, to_field='org_id', related_name='dest_org_id')
-    approval_status = models.CharField(max_length=1, choices=[('P', 'Pending'), ('A', 'Approved'), ('R', 'Rejected')], default='P')
-    comments = models.CharField(max_length=255, default='')
     created_on = models.DateTimeField(default=datetime.now())
-    updated_on = models.DateTimeField(default=datetime.now())
+    #status is needed if there is an approval process
+    def __str__(self):
+        return f'{self.order_id} ({self.src_org_id.name} -> {self.dest_org_id.name})'
 
 class PurchaseOrderDetails(models.Model):
     order_id = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, to_field='order_id')

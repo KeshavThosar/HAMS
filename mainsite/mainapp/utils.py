@@ -1,7 +1,7 @@
 from .models import UserOrganization, OrganizationStock
 
 def get_user_org(user):
-    org = UserOrganization.objects.get(id=user.id)
+    org = UserOrganization.objects.get(user_id=user.id)
     return org 
 
 def get_org_assets(org):
