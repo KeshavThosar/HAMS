@@ -1,5 +1,6 @@
 # Ignore Python virtual environments
 mlh/
+dev/
 
 # Ignore cache files
 __pycache__/
